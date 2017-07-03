@@ -2,114 +2,142 @@
 using System.Net;
 using System.Web.Http;
 using refactor_me.Models;
+using Domain.Repository;
+using System.Collections.Generic;
+using Domain.Model;
 
 namespace refactor_me.Controllers
 {
     [RoutePrefix("products")]
     public class ProductsController : ApiController
     {
+		private IProductRepository _productRepository;
+		private IProductOptionRepository _productOptionRepository;
+
+		public ProductsController(IProductRepository productRepository, IProductOptionRepository productOptionRepository)
+		{
+			_productRepository = productRepository;
+			_productOptionRepository = productOptionRepository;
+		}
+
         [Route]
         [HttpGet]
-        public Products GetAll()
+        public IHttpActionResult GetAll()
         {
-            return new Products();
+			IList<Product> items = _productRepository.GetAll();
+			ItemCollectionDto<Product> dto = new ItemCollectionDto<Product>(items);
+			return Ok(dto);
         }
 
         [Route]
         [HttpGet]
-        public Products SearchByName(string name)
+        public IHttpActionResult SearchByName(string name)
         {
-            return new Products(name);
-        }
+			IList<Product> items = _productRepository.GetByName(name);
+			ItemCollectionDto<Product> dto = new ItemCollectionDto<Product>(items);
+			return Ok(dto);
+		}
 
-        [Route("{id}")]
+		[Route("{id}")]
         [HttpGet]
-        public Product GetProduct(Guid id)
+        public IHttpActionResult GetProduct(Guid id)
         {
-            var product = new Product(id);
-            if (product.IsNew)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+			Product product = _productRepository.GetById(id);
+            if (product == null)
+			{
+				return StatusCode(HttpStatusCode.NotFound);
+			}
 
-            return product;
+            return Ok(product);
         }
 
         [Route]
         [HttpPost]
-        public void Create(Product product)
+        public IHttpActionResult Create(Product product)
         {
-            product.Save();
+			_productRepository.Create(product);
+			return StatusCode(HttpStatusCode.NoContent);
         }
 
         [Route("{id}")]
         [HttpPut]
-        public void Update(Guid id, Product product)
+        public IHttpActionResult Update(Guid id, Product product)
         {
-            var orig = new Product(id)
-            {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
+			Product original = _productRepository.GetById(id);
+			if (original == null)
+			{
+				return StatusCode(HttpStatusCode.NotFound);
+			}
+			original.Name = product.Name;
+			original.Description = product.Description;
+			original.Price = product.Price;
+			original.DeliveryPrice = product.DeliveryPrice;
+			_productRepository.Update(original);
+			return StatusCode(HttpStatusCode.NoContent);
+		}
 
-            if (!orig.IsNew)
-                orig.Save();
-        }
-
-        [Route("{id}")]
+		[Route("{id}")]
         [HttpDelete]
-        public void Delete(Guid id)
+        public IHttpActionResult Delete(Guid id)
         {
-            var product = new Product(id);
-            product.Delete();
-        }
+			// TODO - consider if its an error if the ID does not exist
+			_productRepository.Delete(id);
+			return StatusCode(HttpStatusCode.NoContent);
+		}
 
-        [Route("{productId}/options")]
+		[Route("{productId}/options")]
         [HttpGet]
-        public ProductOptions GetOptions(Guid productId)
+        public IHttpActionResult GetOptions(Guid productId)
         {
-            return new ProductOptions(productId);
+			IList<ProductOption> items = _productOptionRepository.GetByProductId(productId);
+			ItemCollectionDto<ProductOption> dto = new ItemCollectionDto<ProductOption>(items);
+			return Ok(dto);
         }
 
         [Route("{productId}/options/{id}")]
         [HttpGet]
-        public ProductOption GetOption(Guid productId, Guid id)
+        public IHttpActionResult GetOption(Guid productId, Guid id)
         {
-            var option = new ProductOption(id);
-            if (option.IsNew)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+			ProductOption option = _productOptionRepository.GetById(id);
+			if (option == null)
+			{
+				return StatusCode(HttpStatusCode.NotFound);
+			}
 
-            return option;
+			return Ok(option);
         }
 
         [Route("{productId}/options")]
         [HttpPost]
-        public void CreateOption(Guid productId, ProductOption option)
+        public IHttpActionResult CreateOption(Guid productId, ProductOption option)
         {
             option.ProductId = productId;
-            option.Save();
+			_productOptionRepository.Create(option);
+			return StatusCode(HttpStatusCode.NoContent);
         }
 
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public void UpdateOption(Guid id, ProductOption option)
+        public IHttpActionResult UpdateOption(Guid id, ProductOption option)
         {
-            var orig = new ProductOption(id)
-            {
-                Name = option.Name,
-                Description = option.Description
-            };
-
-            if (!orig.IsNew)
-                orig.Save();
+			ProductOption original = _productOptionRepository.GetById(id);
+			if (original == null)
+			{
+				return StatusCode(HttpStatusCode.NotFound);
+			}
+			original.Name = option.Name;
+			original.Description = option.Description;
+			_productOptionRepository.Update(original);
+			return StatusCode(HttpStatusCode.NoContent);
         }
 
         [Route("{productId}/options/{id}")]
         [HttpDelete]
-        public void DeleteOption(Guid id)
+        public IHttpActionResult DeleteOption(Guid id)
         {
-            var opt = new ProductOption(id);
-            opt.Delete();
+			// TODO - consider if its an error if the ID does not exist
+			_productOptionRepository.Delete(id);
+			return StatusCode(HttpStatusCode.NoContent);
         }
     }
 }

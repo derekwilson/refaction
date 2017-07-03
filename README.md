@@ -81,3 +81,33 @@ All models are specified in the `/Models` folder, but should conform to:
 Create a pull request back into this repository and describe, in as much detail as you feel necessary, what you have done to improve this project. Include your full name in the title as it appears on your CV so we can match it back to your job application. We'll take it from there and review.
 
 Good luck!
+
+## Updates
+
+Integration Tests
+
+ProductTests: Started
+Product 8f2e9176-35ee-4f0a-ae55-83023d2db1a3, Samsung Galaxy S7, Newest mobile product from Samsung., 1024.99, 16.99
+Product de1287c0-4b15-4a7b-9d8a-dd21b3cafec3, Apple iPhone 6S, Newest mobile product from Apple., 1299.99, 15.99
+ProductTests: TestGetAll OK
+Product 8f2e9176-35ee-4f0a-ae55-83023d2db1a3, Samsung Galaxy S7, Newest mobile product from Samsung., 1024.99, 16.99
+ProductTests: TestGet OK
+Product 8f2e9176-35ee-4f0a-ae55-83023d2db1a3, Samsung Galaxy S7, Newest mobile product from Samsung., 1024.99, 16.99
+ProductTests: TestGetByName OK
+ProductTests: TestCreateAndDelete OK
+ProductTests: TestUpdateAndDelete OK
+ProductTests: Complete
+ProductOptionTests: Started
+ProductOption 0643ccf0-ab00-4862-b3c5-40e2731abcc9, 8f2e9176-35ee-4f0a-ae55-83023d2db1a3 White, White Samsung Galaxy S7
+ProductOption a21d5777-a655-4020-b431-624bb331e9a2, 8f2e9176-35ee-4f0a-ae55-83023d2db1a3 Black, Black Samsung Galaxy S7
+ProductOption 5c2996ab-54ad-4999-92d2-89245682d534, de1287c0-4b15-4a7b-9d8a-dd21b3cafec3 Rose Gold, Gold Apple iPhone 6S
+ProductOption 9ae6f477-a010-4ec9-b6a8-92a85d6c5f03, de1287c0-4b15-4a7b-9d8a-dd21b3cafec3 White, White Apple iPhone 6S
+ProductOption 4e2bc5f2-699a-4c42-802e-ce4b4d2ac0ef, de1287c0-4b15-4a7b-9d8a-dd21b3cafec3 Black, Black Apple iPhone 6S
+ProductOptionTests: TestGetAll OK
+ProductOption 0643ccf0-ab00-4862-b3c5-40e2731abcc9, 8f2e9176-35ee-4f0a-ae55-83023d2db1a3 White, White Samsung Galaxy S7
+ProductOptionTests: TestGet OK
+ProductOptionTests: TestCreateAndDelete OK
+ProductOptionTests: Complete
+
+
+
