@@ -15,12 +15,12 @@ namespace Domain.Repository
 
 		ProductOption GetById(Guid id);
 
-		void Create(ProductOption productOption);
+		int Create(ProductOption productOption);
 
-		void Update(ProductOption productOption);
+		int Update(ProductOption productOption);
 
-		void Delete(Guid id);
+		int Delete(Guid id);
 
-		void Delete(ProductOption productOption);
+		int Delete(ProductOption productOption);
 	}
 }

@@ -3,14 +3,13 @@ using Domain.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
 	class ProductTests
 	{
 		public static Guid TestId = new Guid("11111111-1111-1111-1111-111111111111");
+		public static Guid InvalidTestId = new Guid("00000000-1111-1111-1111-111111111111");
 
 		public static void TestAll()
 		{
@@ -20,6 +19,7 @@ namespace IntegrationTests
 			TestGetByName();
 			TestCreateAndDelete();
 			TestUpdateAndDelete();
+			TestDeleteInvalid();
 			Program.WriteMessage("ProductTests: Complete");
 		}
 
@@ -106,11 +106,15 @@ namespace IntegrationTests
 				throw new InvalidOperationException("Test id already present");
 			}
 
-			repository.Create(GetTestProduct());
+			int numberOfRowsAffected = repository.Create(GetTestProduct());
 			productFromDb = repository.GetById(TestId);
 			if (productFromDb == null)
 			{
 				throw new InvalidOperationException("Test id not created");
+			}
+			if (numberOfRowsAffected != 1)
+			{
+				throw new InvalidOperationException("rows affected is incorrect");
 			}
 
 			repository.Delete(TestId);
@@ -134,7 +138,7 @@ namespace IntegrationTests
 			}
 
 			productFromDb.Name = "TestUpdatedName";
-			repository.Update(productFromDb);
+			int numberOfRowsAffected = repository.Update(productFromDb);
 
 			Product updatedProductFromDb = repository.GetById(TestId);
 			if (updatedProductFromDb == null)
@@ -147,6 +151,10 @@ namespace IntegrationTests
 			{
 				throw new InvalidOperationException("name not updated");
 			}
+			if (numberOfRowsAffected != 1)
+			{
+				throw new InvalidOperationException("rows affected is incorrect");
+			}
 
 			repository.Delete(TestId);
 			productFromDb = repository.GetById(TestId);
@@ -156,6 +164,23 @@ namespace IntegrationTests
 			}
 
 			Program.WriteMessage("ProductTests: TestUpdateAndDelete OK");
+		}
+		private static void TestDeleteInvalid()
+		{
+			IProductRepository repository = new ProductRepository(Program.GetDbConnection());
+			Product productFromDb = repository.GetById(InvalidTestId);
+			if (productFromDb != null)
+			{
+				throw new InvalidOperationException("Invalid id exists");
+			}
+
+			int numberOfRowsAffected = repository.Delete(InvalidTestId);
+			if (numberOfRowsAffected != 0)
+			{
+				throw new InvalidOperationException($"delete when missing should return zero, it returned: {numberOfRowsAffected}");
+			}
+
+			Program.WriteMessage("ProductTests: TestDeleteInvalid OK");
 		}
 	}
 }

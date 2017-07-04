@@ -1,11 +1,6 @@
 ﻿using Domain.Data;
 using Domain.SQLServer;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
@@ -26,6 +21,7 @@ namespace IntegrationTests
 		{
 			ProductTests.TestAll();
 			ProductOptionTests.TestAll();
+			ProductAndProductOptionTests.TestAll();
 		}
 	}
 }

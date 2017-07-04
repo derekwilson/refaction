@@ -3,8 +3,6 @@ using Domain.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
@@ -22,7 +20,7 @@ namespace IntegrationTests
 			Program.WriteMessage("ProductOptionTests: Complete");
 		}
 
-		static private void WriteProduct(ProductOption productOption)
+		static private void WriteProductOption(ProductOption productOption)
 		{
 			Program.WriteMessage($"ProductOption {productOption.Id}, {productOption.ProductId} {productOption.Name}, {productOption.Description}");
 		}
@@ -49,7 +47,7 @@ namespace IntegrationTests
 
 			foreach (ProductOption productOption in productOptions)
 			{
-				WriteProduct(productOption);
+				WriteProductOption(productOption);
 			}
 			Program.WriteMessage("ProductOptionTests: TestGetAll OK");
 		}
@@ -68,7 +66,7 @@ namespace IntegrationTests
 			{
 				throw new InvalidOperationException("Cannot find product by id");
 			}
-			WriteProduct(productOption);
+			WriteProductOption(productOption);
 			Program.WriteMessage("ProductOptionTests: TestGet OK");
 		}
 
@@ -83,7 +81,14 @@ namespace IntegrationTests
 				throw new InvalidOperationException("Test id already present");
 			}
 
-			repository.Create(GetTestProductOption());
+			// TODO - this test will fail when we put the foreign key in for the product option relationship
+			// fix this test dont just delete it
+			int numberOfRowsAffected = repository.Create(GetTestProductOption());
+			if (numberOfRowsAffected != 1)
+			{
+				throw new InvalidOperationException("rows affected is incorrect");
+			}
+
 			productFromDb = repository.GetById(TestId);
 			if (productFromDb == null)
 			{

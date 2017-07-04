@@ -15,12 +15,12 @@ namespace Domain.Repository
 
 		IList<Product> GetByName(string name);
 
-		void Create(Product product);
+		int Create(Product product);
 
-		void Update(Product product);
+		int Update(Product product);
 
-		void Delete(Guid id);
+		int Delete(Guid id);
 
-		void Delete(Product product);
+		int Delete(Product product);
 	}
 }

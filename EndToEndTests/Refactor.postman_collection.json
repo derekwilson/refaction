@@ -1,0 +1,62 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Refactor",
+		"_postman_id": "4663d02d-def0-4959-775a-b983bb1fc10d",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:58123/products",
+			"request": {
+				"url": "http://localhost:58123/products",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Id\": \"8f2e9176-1111-4f0a-ae55-83023d2db1a3\",\r\n  \"Name\": \"TEST1\",\r\n  \"Description\": \"Newest mobile product from Samsung.\",\r\n  \"Price\": 1024.99,\r\n  \"DeliveryPrice\": 16.99\r\n}\r\n"
+				},
+				"description": "Create a product"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:58123/products",
+			"request": {
+				"url": "http://localhost:58123/products",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "get all"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:58123/products/8f2e9176-2222-4f0a-ae55-83023d2db1a3",
+			"request": {
+				"url": "http://localhost:58123/products/8f2e9176-2222-4f0a-ae55-83023d2db1a3",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"TEST1 - Update4\",\r\n  \"Description\": \"Newest mobile product from Samsung.\",\r\n  \"Price\": 444,\r\n  \"DeliveryPrice\": 22\r\n}"
+				},
+				"description": "update"
+			},
+			"response": []
+		}
+	]
+}

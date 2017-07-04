@@ -20,6 +20,10 @@ namespace Domain.Repository
 		private const string SQL_SELECT_BY_ID = SQL_SELECT + SQL_WHERE_ID_SUFFIX;
 		private const string SQL_SELECT_BY_NAME = SQL_SELECT + SQL_WHERE_NAME_SUFFIX;
 
+		private const string SQL_INSERT = "insert into product (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
+		private const string SQL_UPDATE = "update product set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id";
+		private const string SQL_DELETE = "delete from product where id = @Id";
+
 		private IConnectionFactory _connectionFactory;
 
 		public ProductRepository(IConnectionFactory factory)
@@ -53,41 +57,61 @@ namespace Domain.Repository
 			}
 		}
 
-		private const string SQL_INSERT = "insert into product (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
-
-		public void Create(Product product)
+		public int Create(Product product)
 		{
+			int numberOfRowsAffected = 0;
+
 			using (IDbConnection connection = _connectionFactory.GetOpenConnection())
 			{
 				var command = new CommandDefinition(SQL_INSERT, product);
-				connection.Execute(command);
+				numberOfRowsAffected = connection.Execute(command);
 			}
+
+			return numberOfRowsAffected;
 		}
 
-		private const string SQL_UPDATE = "update product set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id";
-
-		public void Update(Product product)
+		public int Update(Product product)
 		{
+			int numberOfRowsAffected = 0;
+
 			using (IDbConnection connection = _connectionFactory.GetOpenConnection())
 			{
-				connection.Execute(SQL_UPDATE, product);
+				numberOfRowsAffected = connection.Execute(SQL_UPDATE, product);
 			}
+
+			return numberOfRowsAffected;
 		}
 
-		private const string SQL_DELETE = "delete from product where id = @Id";
-
-		public void Delete(Product product)
+		public int Delete(Product product)
 		{
-			Delete(product.Id);
+			return Delete(product.Id);
 		}
 
-		public void Delete(Guid idToDelete)
+		public int Delete(Guid idToDelete)
 		{
+			int numberOfRowsAffected = 0;
+
 			using (IDbConnection connection = _connectionFactory.GetOpenConnection())
 			{
-				// TODO - delete the product options
-				connection.Execute(SQL_DELETE, new { Id = idToDelete });
+				using (IDbTransaction transaction = connection.BeginTransaction())
+				{
+					try
+					{
+						// if we add a foreign key constraint we could use cascade delete
+						connection.Execute(ProductOptionRepository.SQL_DELETE_BY_PRODUCT_ID, new { Id = idToDelete }, transaction);
+
+						numberOfRowsAffected = connection.Execute(SQL_DELETE, new { Id = idToDelete }, transaction);
+
+						transaction.Commit();
+					}
+					catch
+					{
+						transaction.Rollback();
+						throw;
+					}
+				}
 			}
+			return numberOfRowsAffected;
 		}
 	}
 }
